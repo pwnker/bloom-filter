@@ -7,50 +7,60 @@
 #define h1(x, m) x%m		// first  hash function
 #define h2(x, m) (2*x+3)%m	// second hash function
 
+typedef struct {
+	size_t m;
+	int *filter;
+} BloomFilter;
+
+void bf_init(BloomFilter *bf, size_t m)
+{
+	(*bf).m = m;
+	int tmp[m];
+	(*bf).filter = tmp;
+	for (size_t i = 0; i < m; ++i) {
+		*((*bf).filter + i) = 0;
+	}
+}
+
 /**
  * Adds a value to the bloom filter
  */
-void bf_add(size_t *filter, size_t m, size_t v)
+void bf_add(BloomFilter bf, size_t v)
 {
-	size_t p1 = h1(v, m);
-	size_t p2 = h2(v, m);
+	size_t p1 = h1(v, bf.m);
+	size_t p2 = h2(v, bf.m);
 	
-	filter[p1] = 1;
-	filter[p2] = 1;
+	bf.filter[p1] = 1;
+	bf.filter[p2] = 1;
 }
 
 /**
  * Resets all values of the bloom filter to false (0)
  */
-void bf_clear(size_t *filter, size_t fl)
+void bf_clear(BloomFilter bf)
 {
-	for (size_t i = 0; i < fl; ++i) {
-		filter[i] = 0;
+	for (size_t i = 0; i < bf.m; ++i) {
+		bf.filter[i] = 0;
 	}
-}
-
-/**
- * Prints the bloom filter
- */
-void bf_print(size_t *filter, size_t fl)
-{
-	printf("[ ");
-	for (size_t i = 0; i < fl; ++i) {
-		printf("%zu ", filter[i]);
-	}
-	printf("]\n");
 }
 
 int main()
 {
-	size_t m = 5;
-	size_t filter[m];
+	BloomFilter bf = {0};
+	bf_init(&bf, 5);
 
-	bf_add(filter, 5, 15);
-	bf_print(filter, ARRAY_LEN(filter));
-	bf_clear(filter, ARRAY_LEN(filter));
-	bf_print(filter, ARRAY_LEN(filter));
+	for (size_t i = 0; i < bf.m; ++i) {
+		printf("%d ", bf.filter[i]);
+	}
+	printf("\n");
+
+	bf_add(bf, 2);
+	bf_add(bf, 15);
+
+	for (size_t i = 0; i < bf.m; ++i) {
+		printf("%d ", bf.filter[i]);
+	}
+	printf("\n");
 
 	return 0;
 }
-
