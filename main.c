@@ -44,23 +44,28 @@ void bf_clear(BloomFilter bf)
 	}
 }
 
-int main()
+void bf_print(BloomFilter bf)
 {
-	BloomFilter bf = {0};
-	bf_init(&bf, 5);
-
 	for (size_t i = 0; i < bf.m; ++i) {
 		printf("%d ", bf.filter[i]);
 	}
 	printf("\n");
+	printf("------------\n");
+}
+
+int main()
+{
+	BloomFilter bf = {0};
+	
+	bf_init(&bf, 5);
+
+	printf("------------\n");
+	bf_print(bf);
 
 	bf_add(bf, 2);
 	bf_add(bf, 15);
 
-	for (size_t i = 0; i < bf.m; ++i) {
-		printf("%d ", bf.filter[i]);
-	}
-	printf("\n");
+	bf_print(bf);
 
 	return 0;
 }
