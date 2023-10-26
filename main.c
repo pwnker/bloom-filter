@@ -53,6 +53,14 @@ void bf_print(BloomFilter bf)
 	printf("------------\n");
 }
 
+int bf_contains(BloomFilter bf, size_t v)
+{
+	size_t p1 = h1(v, bf.m);
+	size_t p2 = h2(v, bf.m);
+
+    return bf.filter[p1] == 1 && bf.filter[p2] == 1;
+}
+
 int main()
 {
 	BloomFilter bf = {0};
@@ -67,5 +75,8 @@ int main()
 
 	bf_print(bf);
 
-	return 0;
+	printf("Contains %d: %b\n", 15, bf_contains(bf, 15));
+	printf("Contains %d: %b\n", 14, bf_contains(bf, 14));
+
+    return 0;
 }
